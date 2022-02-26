@@ -13,23 +13,23 @@ class PatchGANDiscriminator(tf.keras.Model):
 
         self.model_layers = [
             Conv2D(64, kernel_size=(4, 4), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]), # InstanceNormalization
+            BatchNormalization(), # InstanceNormalization
             LeakyReLU(alpha=0.2),
 
             Conv2D(128, kernel_size=(4, 4), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]), # InstanceNormalization
+            BatchNormalization(), # InstanceNormalization
             LeakyReLU(alpha=0.2),
 
             Conv2D(256, kernel_size=(4, 4), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             LeakyReLU(alpha=0.2),
 
             Conv2D(512, kernel_size=(4, 4), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             LeakyReLU(alpha=0.2),
 
             Conv2D(512, kernel_size=(4, 4), strides=(1, 1), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             LeakyReLU(alpha=0.2),
 
             # Patch Layer
@@ -37,11 +37,25 @@ class PatchGANDiscriminator(tf.keras.Model):
 
         ]
 
-    def call(self, x):
+    def call(self, x, training=True):
         for layer in self.model_layers:
             x = layer(x)
 
         return x
+
+
+    def backward_step_discriminator(self, real_data, fake_data):
+
+        # 1. Input real data
+        output_real_data = self.call(real_data)
+        loss_real_data = self.loss()
+
+        # 2. Input fake data
+        output_fake_data = self.call(fake_data)
+        loss_fake_data = self.loss()
+
+        loss_combined =  (loss_real_data + loss_fake_data) * 0.5
+
 
 class ResNetBlock(tf.keras.layers.Layer):
 
@@ -52,11 +66,11 @@ class ResNetBlock(tf.keras.layers.Layer):
 
         self.model_layers = [
             Conv2D(n_filters, kernel_size=(3,3), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             ReLU(),
 
             Conv2D(n_filters, kernel_size=(3, 3), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
         ]
         self.concatenate = Concatenate()
 
@@ -77,15 +91,15 @@ class PatchGANGenerator(tf.keras.Model):
 
         self.layer_encoding = [
             Conv2D(64, kernel_size=(7, 7), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             ReLU(),
 
             Conv2D(128, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             ReLU(),
 
             Conv2D(256, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             ReLU(),
         ]
 
@@ -93,39 +107,22 @@ class PatchGANGenerator(tf.keras.Model):
 
         self.layer_decoding = [
             Conv2DTranspose(128, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            BatchNormalization(),  # InstanceNormalization
             ReLU(),
 
-            Conv2DTranspose(64, kernel_size=(3, 3), strides=(2, 2), padding="same",
-                            kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            Conv2DTranspose(64, kernel_size=(3, 3), strides=(2, 2), padding="same", kernel_initializer=kernel_initializer),
+            BatchNormalization(),  # InstanceNormalization
             ReLU(),
 
-            Conv2D(3, kernel_size=(7, 7), padding="same",
-                            kernel_initializer=kernel_initializer),
-            BatchNormalization(axis=[0, 1]),  # InstanceNormalization
+            Conv2D(3, kernel_size=(7, 7), padding="same", kernel_initializer=kernel_initializer),
+            BatchNormalization(),  # InstanceNormalization
             Activation("tanh"),
         ]
 
         self.model_layers = self.layer_encoding + self.layer_interpreting_resnet_blocks + self.layer_decoding
 
-    def call(self, x):
+    def call(self, x, training=True):
         for layer in self.model_layers:
             x = layer(x)
 
         return x
-
-discriminator = PatchGANDiscriminator()
-generator = PatchGANGenerator()
-
-discriminator.build(input_shape=(64, 256, 256, 3))
-generator.build(input_shape=(64, 256, 256, 3))
-
-discriminator.call(Input(shape=(256,256,3)))
-generator.call(Input(shape=(256,256,3)))
-
-discriminator.summary()
-generator.summary()
-
-print(discriminator(tf.random.uniform([64, 256, 256, 3])).shape)
-print(generator(tf.random.uniform([64, 256, 256, 3])).shape)

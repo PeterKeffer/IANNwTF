@@ -59,3 +59,33 @@ class Visualizer:
 
         plt.imshow(image)
         plt.show()
+
+
+
+class GANMonitor(tf.keras.callbacks.Callback):
+    """A callback to generate and save images after each epoch"""
+
+    def __init__(self, dataset: tf.data.Dataset, num_img=4):
+        self.dataset = dataset
+        self.num_img = num_img
+
+    def on_epoch_end(self, epoch, logs=None):
+        _, ax = plt.subplots(4, 2, figsize=(12, 12))
+        for i, images in enumerate(self.dataset.take(self.num_img)):
+            prediction = self.model.generator_AtoB(images)[0].numpy()
+            prediction = ((prediction + 1) * 128).astype(np.uint8)
+            image = ((images[0] + 1) * 128).numpy().astype(np.uint8)
+
+            ax[i, 0].imshow(image)
+            ax[i, 1].imshow(prediction)
+            ax[i, 0].set_title("Input image")
+            ax[i, 1].set_title("Translated image")
+            ax[i, 0].axis("off")
+            ax[i, 1].axis("off")
+
+            prediction = tf.keras.preprocessing.image.array_to_img(prediction)
+            prediction.save(
+                "generated_img_{i}_{epoch}.png".format(i=i, epoch=epoch + 1)
+            )
+        plt.show()
+        plt.close()
