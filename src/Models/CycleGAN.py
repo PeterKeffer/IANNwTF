@@ -1,32 +1,50 @@
+import gc
+import logging
+
 import tensorflow as tf
 from src.Models.PatchGAN import PatchGANGenerator, PatchGANDiscriminator
 
 class CycleGAN(tf.keras.Model):
 
-    def __init__(self):
-        super().__init__()
-
-        self.adverserial_loss = tf.keras.losses.MeanSquaredError()
-        self.cycle_loss = tf.keras.losses.MeanAbsoluteError()
-        self.identity_loss = tf.keras.losses.MeanAbsoluteError()
-
-        self.generator_AtoB_optimizer = tf.keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5)
-        self.generator_BtoA_optimizer = tf.keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5)
-
-        self.discriminator_A_optimizer = tf.keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5)
-        self.discriminator_B_optimizer = tf.keras.optimizers.Adam(learning_rate=2e-4, beta_1=0.5)
+    def __init__(self, generator_AtoB, generator_BtoA, discriminator_A, discriminator_B):
+        super(CycleGAN, self).__init__()
 
         self.cycle_weight = 10.0
         self.identity_weight = 0.5
 
-        self.generator_AtoB: tf.keras.Model = PatchGANGenerator()
-        self.generator_BtoA: tf.keras.Model = PatchGANGenerator()
+        self.generator_AtoB: tf.keras.Model = generator_AtoB
+        self.generator_BtoA: tf.keras.Model = generator_BtoA
 
-        self.discriminator_A: tf.keras.Model = PatchGANDiscriminator()
-        self.discriminator_B: tf.keras.Model = PatchGANDiscriminator()
+        self.discriminator_A: tf.keras.Model = discriminator_A
+        self.discriminator_B: tf.keras.Model = discriminator_B
+
+
+    def compile(
+        self,
+        generator_AtoB_optimizer,
+        generator_BtoA_optimizer,
+        discriminator_A_optimizer,
+        discriminator_B_optimizer,
+        adverserial_loss,
+        cycle_loss,
+        identity_loss,
+        generator_fake_adverserial_loss,
+        discriminator_loss,
+    ):
+        super(CycleGAN, self).compile()
+        self.generator_AtoB_optimizer = generator_AtoB_optimizer
+        self.generator_BtoA_optimizer = generator_BtoA_optimizer
+        self.discriminator_A_optimizer = discriminator_A_optimizer
+        self.discriminator_B_optimizer = discriminator_B_optimizer
+        self.adverserial_loss = adverserial_loss
+        self.cycle_loss = cycle_loss
+        self.identity_loss = identity_loss
+        self.generator_fake_adverserial_loss = generator_fake_adverserial_loss
+        self.discriminator_loss = discriminator_loss
 
     def train_step(self, datasets):
         real_data_A, real_data_B = datasets
+        # TODO persistent auf False setzen um Overflow zu debuggen
         with tf.GradientTape(persistent=True) as tape:
             # generates image with type B from image type A
             fake_data_B = self.generator_AtoB(real_data_A, training=True)
@@ -38,8 +56,8 @@ class CycleGAN(tf.keras.Model):
             back_cycled_B = self.generator_AtoB(fake_data_A, training=True)
 
             # identity mapping: generates image type X from image type X
-            identity_B = self.generator_AtoB(real_data_B, training=True)
             identity_A = self.generator_BtoA(real_data_A, training=True)
+            identity_B = self.generator_AtoB(real_data_B, training=True)
 
             #train discriminator with real data and later fake data
             discriminator_real_A = self.discriminator_A(real_data_A, training=True)
@@ -54,14 +72,14 @@ class CycleGAN(tf.keras.Model):
             generator_BtoA_loss = self.generator_fake_adverserial_loss(discriminator_fake_A)
 
             #calculates back cycle data
-            back_cycle_loss_A = self.cycle_loss(real_data_A, back_cycled_A) * self.cycle_weight
-            back_cycle_loss_B = self.cycle_loss(real_data_B, back_cycled_B) * self.cycle_weight
+            back_cycle_loss_AtoB = self.cycle_loss(real_data_A, back_cycled_A) * self.cycle_weight
+            back_cycle_loss_BtoA = self.cycle_loss(real_data_B, back_cycled_B) * self.cycle_weight
 
             identity_loss_A = self.identity_loss(real_data_A, identity_A) * self.cycle_weight * self.identity_weight
             identity_loss_B = self.identity_loss(real_data_B, identity_B) * self.cycle_weight * self.identity_weight
 
-            generator_AtoB_total_loss = generator_AtoB_loss + back_cycle_loss_B + identity_loss_B
-            generator_BtoA_total_loss = generator_BtoA_loss + back_cycle_loss_A + identity_loss_A
+            generator_AtoB_total_loss = generator_AtoB_loss + back_cycle_loss_BtoA + identity_loss_B
+            generator_BtoA_total_loss = generator_BtoA_loss + back_cycle_loss_AtoB + identity_loss_A
 
             discriminator_A_loss = self.discriminator_loss(discriminator_real_A, discriminator_fake_A)
             discriminator_B_loss = self.discriminator_loss(discriminator_real_B, discriminator_fake_B)
@@ -74,7 +92,7 @@ class CycleGAN(tf.keras.Model):
 
         self.generator_AtoB_optimizer.apply_gradients(zip(gradients_generator_AtoB, self.generator_AtoB.trainable_variables))
         self.generator_BtoA_optimizer.apply_gradients(zip(gradients_generator_BtoA, self.generator_BtoA.trainable_variables))
-
+        
         self.discriminator_A_optimizer.apply_gradients(zip(gradients_discriminator_A, self.discriminator_A.trainable_variables))
         self.discriminator_B_optimizer.apply_gradients(zip(gradients_discriminator_B, self.discriminator_B.trainable_variables))
 
@@ -85,12 +103,4 @@ class CycleGAN(tf.keras.Model):
             "Discriminator_B_Loss": discriminator_B_loss,
         }
 
-    def generator_fake_adverserial_loss(self, discriminator_fake_output):
-        fake_loss = self.adverserial_loss(tf.ones_like(discriminator_fake_output), discriminator_fake_output)
-        return fake_loss
-
-    def discriminator_loss(self, real, fake):
-        real_loss = self.adverserial_loss(tf.ones_like(real), real)
-        fake_loss = self.adverserial_loss(tf.zeros_like(fake), fake)
-        return (real_loss + fake_loss) * 0.5
 

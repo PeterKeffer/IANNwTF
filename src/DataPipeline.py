@@ -45,9 +45,9 @@ class DataPipeline:
         dataset = tf.data.Dataset.from_tensor_slices(images)
         return dataset
 
-    def batch_preparation(self, dataset: tf.data.Dataset, shuffle_size=1000, batch_size=64,
-                          prefetch_size=10) -> tf.data.Dataset:
-        dataset = dataset.cache().shuffle(shuffle_size).batch(batch_size).prefetch(prefetch_size)
+    def batch_preparation(self, dataset: tf.data.Dataset, shuffle_size=10, batch_size=32,
+                          prefetch_size=2) -> tf.data.Dataset:
+        dataset = dataset.shuffle(shuffle_size).batch(batch_size).prefetch(prefetch_size)
         return dataset
 
     def split_dataset(self, dataset: tf.data.Dataset, test_ratio: float, validation_ratio: float) -> [tf.data.Dataset,
