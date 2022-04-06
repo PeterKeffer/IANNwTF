@@ -15,11 +15,11 @@ class DatasetDownloader:
         """
         self.filepath = output_filepath
 
+        output_file_directory = os.path.dirname(output_filepath)
+        Path(output_file_directory).mkdir(parents=True, exist_ok=True)
         if os.path.isfile(output_filepath) and not override:
             logging.warning("File already exists!")
             return
-        output_file_directory = os.path.dirname(output_filepath)
-        Path(output_file_directory).mkdir(parents=True, exist_ok=True)
         self.download(url, output_filepath)
 
     def download(self, url: str, output_filepath: str):

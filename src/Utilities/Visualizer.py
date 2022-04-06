@@ -1,4 +1,6 @@
+import os
 import random
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -83,9 +85,13 @@ class GANMonitor(tf.keras.callbacks.Callback):
             ax[i, 0].axis("off")
             ax[i, 1].axis("off")
 
+            output_filepath = f"Logs/Generated_Images/generated_img_{i}_{epoch+1}.png"
+            output_file_directory = os.path.dirname(output_filepath)
+            Path(output_file_directory).mkdir(parents=True, exist_ok=True)
+
             prediction = tf.keras.preprocessing.image.array_to_img(prediction)
             prediction.save(
-                "generated_img_{i}_{epoch}.png".format(i=i, epoch=epoch + 1)
+                output_filepath
             )
         plt.show()
         plt.close()

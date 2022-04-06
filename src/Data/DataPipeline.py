@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from keras.applications import vgg19
 
 
 class DataPipeline:
@@ -64,5 +65,46 @@ class DataPipeline:
 
     def augment_data(self, image, rotation_range):
         image = tf.keras.preprocessing.image.random_rotation(image, rotation_range)
+        return image
+
+    def convert_tensor_to_image(self, image_tensor, image_width, image_height, image_channels):
+        image = image_tensor.reshape((image_width, image_height, image_channels))
+
+        return image
+
+    def remove_zero_center_imagenet(self, image):
+        image[:, :, 0] += 103.939
+        image[:, :, 1] += 116.779
+        image[:, :, 2] += 123.68
+
+        return image
+
+    def set_zero_center_imagenet(self, image):
+        image[:, :, 0] -= 103.939
+        image[:, :, 1] -= 116.779
+        image[:, :, 2] -= 123.68
+
+        return image
+
+    def convert_bgr_to_rgb(self, image):
+        image = image[:, :, ::-1]
+        image = np.clip(image, 0, 255).astype("uint8")
+
+        return image
+
+    def preprocess_image_vgg19(self, image_path, target_image_shape):
+        image = tf.keras.preprocessing.image.load_img(image_path, target_size=(target_image_shape[0], target_image_shape[1]))
+        image = tf.keras.preprocessing.image.img_to_array(image)
+        image = np.expand_dims(image, axis=0)
+        image = vgg19.preprocess_input(image)
+        image_tensor = tf.convert_to_tensor(image)
+
+        return image_tensor
+
+    def deprocess_image_tensor_vgg19(self, image_tensor, image_shape):
+        image = self.convert_tensor_to_image(image_tensor, image_width=image_shape[0], image_height=image_shape[1], image_channels=image_shape[2])
+        image = self.remove_zero_center_imagenet(image)
+        image = self.convert_bgr_to_rgb(image)
+
         return image
 
