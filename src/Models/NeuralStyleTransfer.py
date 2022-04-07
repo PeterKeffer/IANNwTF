@@ -43,10 +43,9 @@ class NeuralStyleTransfer(tf.keras.Model):
 
         return tf.reduce_sum(tf.pow(a + b, 1.25))
 
-    def train_step(self, images):
-        
+    def call(self, images):
         generated_image, content_image, style_image = images
-        
+
         # Initialize the loss
         total_loss = tf.zeros(shape=())
 
@@ -73,12 +72,17 @@ class NeuralStyleTransfer(tf.keras.Model):
 
         # Add total variation loss
         total_loss += self.config["hyperparameters"]["total_variation_weight"] * self.total_variation_loss(generated_image)
-        return total_loss
 
-    # @tf.function
-    def call(self, images):
-        generated_image, content_image, style_image = images
+        return total_loss, generated_image
+
+    def train_step(self, images):
+        generated_image, content_image, style_image = images[:, 0, :, :, :], images[:, 1, :, :, :], images[:, 2, :, :, :]
+        generated_image = tf.Variable(generated_image)
+        images = (generated_image, content_image, style_image)
         with tf.GradientTape() as tape:
-            loss = self.train_step(images)
-        grads = tape.gradient(loss, generated_image)
-        return loss, grads
+            total_loss, generated_image = self._train_step(images)
+        gradients = tape.gradient(total_loss, generated_image)
+
+        self.optimizer.apply_gradients([(gradients, generated_image)])
+
+        return {"total_loss": total_loss, "generated_image": generated_image}
