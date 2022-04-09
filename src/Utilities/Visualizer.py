@@ -85,13 +85,19 @@ class GANMonitor(tf.keras.callbacks.Callback):
             ax[i, 0].axis("off")
             ax[i, 1].axis("off")
 
-            output_filepath = f"Logs/Generated_Images/generated_img_{i}_{epoch+1}.png"
-            output_file_directory = os.path.dirname(output_filepath)
-            Path(output_file_directory).mkdir(parents=True, exist_ok=True)
+            output_generated_image_filepath = f"Logs/Generated_Images/generated_img_{i}_{epoch+1}.png"
+            output_generated_image_directory = os.path.dirname(output_generated_image_filepath)
+            Path(output_generated_image_directory).mkdir(parents=True, exist_ok=True)
+            
+            output_input_image_filepath = f"Logs/Input_Images/input_img_{i}_{epoch+1}.png"
+            output_input_image_directory = os.path.dirname(output_input_image_filepath)
+            Path(output_input_image_directory).mkdir(parents=True, exist_ok=True)
 
             prediction = tf.keras.preprocessing.image.array_to_img(prediction)
-            prediction.save(
-                output_filepath
-            )
+            prediction.save(output_generated_image_filepath)
+
+            image = tf.keras.preprocessing.image.array_to_img(image)
+            image.save(output_input_image_filepath)
+
         plt.show()
         plt.close()

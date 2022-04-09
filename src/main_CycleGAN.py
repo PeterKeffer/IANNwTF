@@ -65,5 +65,5 @@ model = CycleGAN()
 model.compile()
 model.fit(
     tf.data.Dataset.zip((trainA_dataset, trainB_dataset)),
-    epochs=10,
+    epochs=100,
     callbacks=[ganMonitor])

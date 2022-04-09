@@ -33,7 +33,8 @@ class ConfigNeuralStyleTransfer(Config):
             "content_weight": 1e-7,
             "learning_rate": 10.0,
 
-            "iterations": 5000
+            "iterations": 5000,
+            "printing_epoch_interval": 100,
         }
     }
 
