@@ -1,13 +1,20 @@
 import tensorflow as tf
+import wandb
+from wandb.integration.keras import WandbCallback
 
 from src.Data.DataPipeline import DataPipeline
 from src.Data.DatasetDownloader import DatasetDownloader
 from src.Utilities.Visualizer import Visualizer, GANMonitor
 from src.Models.CycleGAN import CycleGAN
+from src.Configs.Config_CycleGAN import ConfigCycleGAN
 
-# logging.basicConfig(level=logging.INFO)
-# wandb.init()
-# wandb.config = config
+config = ConfigCycleGAN().get_config()
+
+logging.basicConfig(level=config["settings"]["logging_level"])
+
+if config["settings"]["use_wandb"]:
+    wandb.init("CycleGAN")
+    wandb.config = config
 
 dataset_downloader = DatasetDownloader(url="https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets/ukiyoe2photo.zip", output_filepath="Data/Downloads/ukiyoe-dataset.zip")
 dataset_downloader.unpack(output_filepath="Data/")
@@ -56,10 +63,18 @@ visualizer = Visualizer()
 visualizer.show_dataset_images(trainA_dataset, 5)
 visualizer.show_dataset_images(trainB_dataset, 5)
 
+callbacks = []
+
 ganMonitor = GANMonitor(testA_dataset)
+callbacks += ganMonitor
+
 tensorboard_callback = tf.keras.callbacks.TensorBoard(
     log_dir='logs', write_graph=True,
     write_images=True)
+callbacks += tensorboard_callback
+
+if config["settings"]["use_wandb"]:
+    callbacks += WandbCallback()
 
 model = CycleGAN()
 model.compile()

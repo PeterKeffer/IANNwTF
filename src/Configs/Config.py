@@ -7,11 +7,11 @@ class Config:
     }
 
     def __init__(self):
-        self.config = self.setup(self.config)
+        self.config = self.setup()
 
-    def setup(self, config):
+    def setup(self):
 
-        return config
+        return self.config
 
     def get_config(self):
 

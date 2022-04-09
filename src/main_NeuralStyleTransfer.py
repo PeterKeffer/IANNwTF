@@ -2,14 +2,20 @@ import tensorflow as tf
 import wandb
 from tensorflow.keras.applications import vgg19
 import numpy as np
-from Data.DataPipeline import DataPipeline
-from Models.NeuralStyleTransfer import NeuralStyleTransfer
-from Configs.Config_NeuralStyleTransfer import ConfigNeuralStyleTransfer
+from src.Data.DataPipeline import DataPipeline
+from src.Models.NeuralStyleTransfer import NeuralStyleTransfer
+from src.Configs.Config_NeuralStyleTransfer import ConfigNeuralStyleTransfer
 from src.Utilities.Callbacks.ImageGenerator import ImageGenerator
 
-wandb.init("NeuralStyleTransfer")
 
 config = ConfigNeuralStyleTransfer().get_config()
+
+logging.basicConfig(level=config["settings"]["logging_level"])
+
+if config["settings"]["use_wandb"]:
+    wandb.init("NeuralStyleTransfer")
+    wandb.config = config
+
 data_pipeline = DataPipeline()
 neural_style_transfer = NeuralStyleTransfer(config)
 
@@ -31,8 +37,9 @@ for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
     if iteration % config["hyperparameters"]["printing_epoch_interval"] == 0:
         print("Iteration %d: loss=%.2f" % (iteration, logs["total_loss"]))
 
-    wandb.log(logs)
     image_generator_callback.on_epoch_end(iteration, logs)
+    if config["settings"]["use_wandb"]:
+        wandb.log(logs)
 
 
 
