@@ -21,7 +21,7 @@ class ConfigNeuralStyleTransfer(Config):
 
         },
         "output_data": {
-            "output_path": "",
+            "output_path": "Logs/NeuralStyleTransfer/",
             "output_prefix": "doggo_generated",
             "generated_image_resize_factor": None,
             "generated_image_width": 400,

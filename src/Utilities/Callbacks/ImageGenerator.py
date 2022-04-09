@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import tensorflow as tf
 
 from src.Data.DataPipeline import DataPipeline
@@ -15,6 +18,10 @@ class ImageGenerator(tf.keras.callbacks.Callback):
             data_pipeline = DataPipeline()
 
             image = data_pipeline.deprocess_image_tensor_vgg19(logs["generated_image"].numpy(), target_shape)
-            filename = self.config["output_data"]["output_prefix"] + "_at_iteration_%d.png" % epoch
-            tf.keras.preprocessing.image.save_img(filename, image)
+
+            output_filename = self.config["output_data"]["output_path"] + self.config["output_data"]["output_prefix"] + "_at_iteration_%d.png" % epoch
+            output_image_directory = os.path.dirname(output_filename)
+            Path(output_image_directory).mkdir(parents=True, exist_ok=True)
+
+            tf.keras.preprocessing.image.save_img(output_filename, image)
 
