@@ -6,7 +6,7 @@ class ConfigCycleGAN(Config):
         "settings": {
             "use_wandb": False,
             "logging_level": logging.INFO
-    }
+    },
         "input_data": {
 
         },
