@@ -10,7 +10,7 @@ from Data.DataPipeline import DataPipeline
 from Models.NeuralStyleTransfer import NeuralStyleTransfer
 from Configs.Config_NeuralStyleTransfer import ConfigNeuralStyleTransfer
 from Utilities.Callbacks.ImageGenerator import ImageGenerator
-
+from Utilities.Visualizer import Visualizer
 
 config = ConfigNeuralStyleTransfer().get_config()
 
@@ -30,6 +30,8 @@ content_image = data_pipeline.preprocess_image_vgg19(config["input_data"]["conte
 style_image = data_pipeline.preprocess_image_vgg19(config["input_data"]["style_image_path"], target_image_shape)
 generated_image = tf.Variable(data_pipeline.preprocess_image_vgg19(config["input_data"]["content_image_path"], target_image_shape))
 
+visualizer = Visualizer()
+
 optimizer = tf.keras.optimizers.Adam(learning_rate=config["hyperparameters"]["learning_rate"])
 
 image_generator_callback = ImageGenerator(config)
@@ -42,7 +44,7 @@ tensorboard_summary_writer = tf.summary.create_file_writer(train_log_dir)
 for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
     logs = neural_style_transfer.train_step((generated_image, content_image, style_image), optimizer)
 
-    # Tensorboard usage
+        # Tensorboard usage
     with tensorboard_summary_writer.as_default():
         tf.summary.scalar('total_loss', logs["total_loss"], step=iteration)
         tf.summary.scalar('content_loss', logs["content_loss"], step=iteration)
@@ -52,6 +54,9 @@ for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
 
     if iteration % config["settings"]["printing_epoch_interval"] == 0:
         print("Iteration %d: loss=%.2f" % (iteration, logs["total_loss"]))
+
+        generated_image_deprocessed = data_pipeline.deprocess_image_tensor_vgg19(copy(generated_image).numpy(), target_image_shape)
+        visualizer.show_image(generated_image_deprocessed, normalized=False)
 
     image_generator_callback.on_epoch_end(iteration, logs)
     # Delete Generated Image from Logs
