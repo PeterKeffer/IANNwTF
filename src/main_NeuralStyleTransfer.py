@@ -37,8 +37,8 @@ optimizer = tf.keras.optimizers.Adam(learning_rate=config["hyperparameters"]["le
 image_generator_callback = ImageGenerator(config)
 
 # Tensorboard Preparation
-current_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-train_log_dir = 'Logs/gradient_tape/' + current_time + '/train'
+current_time = datetime.datetime.now().strftime("%Y%m%d")
+train_log_dir = 'Logs/Training/' + current_time
 tensorboard_summary_writer = tf.summary.create_file_writer(train_log_dir)
 
 for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
@@ -53,7 +53,7 @@ for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
             tf.summary.image("Generated Image", generated_image, step=iteration)
 
     if iteration % config["settings"]["printing_epoch_interval"] == 0:
-        print("Iteration %d: loss=%.2f" % (iteration, logs["total_loss"]))
+        print(f"Iteration {iteration}: total loss=%.2f, style loss=%.2f, content loss=%.2f" % (logs["total_loss"], logs["style_loss"], logs["content_loss"]))
 
         generated_image_deprocessed = data_pipeline.deprocess_image_tensor_vgg19(copy(generated_image).numpy(), target_image_shape)
         visualizer.show_image(generated_image_deprocessed, normalized=False)

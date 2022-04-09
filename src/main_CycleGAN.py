@@ -69,7 +69,7 @@ ganMonitor = GANMonitor(testA_dataset, config)
 callbacks.append(ganMonitor)
 
 tensorboard_callback = tf.keras.callbacks.TensorBoard(
-    log_dir='Logs/', write_graph=True,
+    log_dir='Logs/Training', write_graph=True,
     write_images=True)
 callbacks.append(tensorboard_callback)
 
