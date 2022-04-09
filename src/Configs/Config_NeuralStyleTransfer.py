@@ -1,7 +1,35 @@
 import logging
 
+import os
+from pathlib import Path
+
+import requests
 import tensorflow as tf
 from Configs.Config import Config
+
+
+# Inspiration Source: https://stackoverflow.com/questions/56950987/download-file-from-url-and-save-it-in-a-folder-python
+def download(origin: str, file_path: str):
+    if (file_path == None or file_path == "") and os.path.exists(origin):
+        return origin
+
+    file_directory = os.path.dirname(file_path)
+    Path(file_directory).mkdir(parents=True, exist_ok=True)
+
+    r = requests.get(origin, stream=True)
+    if r.ok:
+        print("Saving to", os.path.abspath(file_path))
+        with open(file_path, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024 * 8):
+                if chunk:
+                    f.write(chunk)
+                    f.flush()
+                    os.fsync(f.fileno())
+        return file_path
+    else:  # HTTP status code 4XX/5XX
+        print("Download failed: status code {}\n{}".format(r.status_code, r.text))
+
+
 
 class ConfigNeuralStyleTransfer(Config):
 
@@ -13,8 +41,8 @@ class ConfigNeuralStyleTransfer(Config):
         },
 
         "input_data": {
-            "content_image_path": tf.keras.utils.get_file(fname="content.jpg", origin="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=1.00xw:0.669xh;0,0.190xh&resize=1200:*"),
-            "style_image_path": tf.keras.utils.get_file(fname="style.jpg", origin="https://camo.githubusercontent.com/4ed1f0a52c522eadfe1b95e5555de2209fbc8b34c4b816c1b1e9c2d4277b1652/68747470733a2f2f73746f726167652e676f6f676c65617069732e636f6d2f646f776e6c6f61642e74656e736f72666c6f772e6f72672f6578616d706c655f696d616765732f56617373696c795f4b616e64696e736b792532435f313931335f2d5f436f6d706f736974696f6e5f372e6a7067"),
+            "content_image_path": download(file_path="Data/NeuralStyleTransfer/content.jpg", origin="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=1.00xw:0.669xh;0,0.190xh&resize=1200:*"),
+            "style_image_path": download(file_path="Data/NeuralStyleTransfer/style.jpg", origin="https://camo.githubusercontent.com/4ed1f0a52c522eadfe1b95e5555de2209fbc8b34c4b816c1b1e9c2d4277b1652/68747470733a2f2f73746f726167652e676f6f676c65617069732e636f6d2f646f776e6c6f61642e74656e736f72666c6f772e6f72672f6578616d706c655f696d616765732f56617373696c795f4b616e64696e736b792532435f313931335f2d5f436f6d706f736974696f6e5f372e6a7067"),
             "input_image_width": None,
             "input_image_height": None,
             "input_image_channels": None
@@ -57,5 +85,6 @@ class ConfigNeuralStyleTransfer(Config):
         self.config["output_data"]["generated_image_height"] = int(self.config["input_data"]["input_image_width"] * self.config["output_data"]["generated_image_width"] / self.config["input_data"]["input_image_height"])
 
         return self.config
+
 
 

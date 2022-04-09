@@ -16,7 +16,7 @@ class GANMonitor(tf.keras.callbacks.Callback):
     def __init__(self, dataset: tf.data.Dataset, config):
         self.dataset = dataset
         self.config = config
-        self.amount_generated_example_images = config["settings"]["amount_generated_example_images"]
+        self.amount_generated_example_images = self.config["settings"]["amount_generated_example_images"]
 
     def on_epoch_end(self, epoch, logs=None):
         _, ax = plt.subplots(self.amount_generated_example_images, 2, figsize=(3 * self.amount_generated_example_images, 3 * self.amount_generated_example_images))
