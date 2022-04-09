@@ -9,7 +9,7 @@ class ImageGenerator(tf.keras.callbacks.Callback):
         self.config = config
 
     def on_epoch_end(self, epoch, logs=None):
-        if epoch % self.config["hyperparameter"]["printing_epoch_interval"] == 0:
+        if epoch % self.config["settings"]["printing_epoch_interval"] == 0:
             target_shape = (self.config["output_data"]["generated_image_width"], self.config["output_data"]["generated_image_height"], self.config["input_data"]["input_image_channels"])
 
             data_pipeline = DataPipeline()

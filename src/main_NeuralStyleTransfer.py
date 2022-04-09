@@ -36,7 +36,7 @@ image_generator_callback = ImageGenerator(config)
 for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
     logs = neural_style_transfer.train_step((generated_image, content_image, style_image), optimizer)
     # generated_image = logs["generated_image"]
-    if iteration % config["hyperparameters"]["printing_epoch_interval"] == 0:
+    if iteration % config["settings"]["printing_epoch_interval"] == 0:
         print("Iteration %d: loss=%.2f" % (iteration, logs["total_loss"]))
 
     image_generator_callback.on_epoch_end(iteration, logs)
