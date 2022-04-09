@@ -1,3 +1,5 @@
+import logging
+
 import tensorflow as tf
 import wandb
 from tensorflow.keras.applications import vgg19
