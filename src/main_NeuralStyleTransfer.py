@@ -6,10 +6,10 @@ import tensorflow as tf
 import wandb
 from tensorflow.keras.applications import vgg19
 import numpy as np
-from src.Data.DataPipeline import DataPipeline
-from src.Models.NeuralStyleTransfer import NeuralStyleTransfer
-from src.Configs.Config_NeuralStyleTransfer import ConfigNeuralStyleTransfer
-from src.Utilities.Callbacks.ImageGenerator import ImageGenerator
+from Data.DataPipeline import DataPipeline
+from Models.NeuralStyleTransfer import NeuralStyleTransfer
+from Configs.Config_NeuralStyleTransfer import ConfigNeuralStyleTransfer
+from Utilities.Callbacks.ImageGenerator import ImageGenerator
 
 
 config = ConfigNeuralStyleTransfer().get_config()

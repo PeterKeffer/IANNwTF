@@ -1,7 +1,7 @@
 import logging
 
 import tensorflow as tf
-from src.Configs.Config import Config
+from Configs.Config import Config
 
 class ConfigNeuralStyleTransfer(Config):
 

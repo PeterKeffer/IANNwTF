@@ -7,7 +7,7 @@ import tensorflow as tf
 import wandb
 from matplotlib import pyplot as plt
 
-from src.Data.DataPipeline import DataPipeline
+from Data.DataPipeline import DataPipeline
 
 
 class GANMonitor(tf.keras.callbacks.Callback):

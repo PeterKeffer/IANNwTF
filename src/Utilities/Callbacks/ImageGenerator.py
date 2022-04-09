@@ -3,7 +3,7 @@ from pathlib import Path
 
 import tensorflow as tf
 
-from src.Data.DataPipeline import DataPipeline
+from Data.DataPipeline import DataPipeline
 
 
 class ImageGenerator(tf.keras.callbacks.Callback):

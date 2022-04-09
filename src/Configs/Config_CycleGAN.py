@@ -1,6 +1,6 @@
 import tensorflow as tf
 import logging
-from src.Configs.Config import Config
+from Configs.Config import Config
 
 class ConfigCycleGAN(Config):
     config = {

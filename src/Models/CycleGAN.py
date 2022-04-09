@@ -1,5 +1,5 @@
 import tensorflow as tf
-from src.Models.PatchGAN import PatchGANGenerator, PatchGANDiscriminator
+from Models.PatchGAN import PatchGANGenerator, PatchGANDiscriminator
 
 class CycleGAN(tf.keras.Model):
 

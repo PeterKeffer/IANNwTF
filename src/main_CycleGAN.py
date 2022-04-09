@@ -3,12 +3,12 @@ import tensorflow as tf
 import wandb
 from wandb.integration.keras import WandbCallback
 
-from src.Data.DataPipeline import DataPipeline
-from src.Data.DatasetDownloader import DatasetDownloader
-from src.Utilities.Visualizer import Visualizer
-from src.Utilities.Callbacks.GANMonitor import GANMonitor
-from src.Models.CycleGAN import CycleGAN
-from src.Configs.Config_CycleGAN import ConfigCycleGAN
+from Data.DataPipeline import DataPipeline
+from Data.DatasetDownloader import DatasetDownloader
+from Utilities.Visualizer import Visualizer
+from Utilities.Callbacks.GANMonitor import GANMonitor
+from Models.CycleGAN import CycleGAN
+from Configs.Config_CycleGAN import ConfigCycleGAN
 
 config = ConfigCycleGAN().get_config()
 
