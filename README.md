@@ -4,7 +4,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Neural Style Transfer Example][images/paris_art.png]
+![Neural Style Transfer Example](images/paris_art.png)
 
 This project is part of the _'Introduction to Artificial Neural Networks with Tensorflow'_ course at the _University Osnabrück_.  
 In our project we generate pictures to which the art style of a chosen artist is transmitted while keeping the pictures content complete.  
@@ -77,7 +77,7 @@ Dog before Style Transfer | Dog after Style Transfer
 
 Paris before Style Transfer | Paris after Style Transfer
 :-------------------------:|:-------------------------:
-![Paris before Style Transfer](doggo_content.jpg) | ![Paris after Style Transfer](doggo_art.png)
+![Paris before Style Transfer](images/doggo_content.jpg) | ![Paris after Style Transfer](images/doggo_art.png)
 
 
 ### Prerequisites
