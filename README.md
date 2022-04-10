@@ -60,25 +60,24 @@ For this we implemented 2 different approaches, on the one hand CycleGAN ( [Link
 
 ## Neural Style Transfer Example 1:
 
-### Reference:
+### Art Style Reference:
 
-![Art Style Reference](images/paris_style.png)
+<img src="images/paris_style.png" alt="drawing" width="1400" />
 
-Dog before Style Transfer | Dog after Style Transfer
+Paris before Style Transfer | Paris after Style Transfer
 :-------------------------:|:-------------------------:
-![Dog before Style Transfer](images/paris_content.jpg) | ![Dog after Style Transfer](images/paris_art.png)
+<img src="images/paris_content.png" alt="drawing" width="1400" /> | <img src="images/paris_art.png" alt="drawing" width="1400" />
 
 
 ## Neural Style Transfer Example 2:
 
-### Reference:
+### Art Style Reference:
 
-![Art Style Reference](images/doggo_style.png)
+<img src="images/doggo_style.png" alt="drawing" width="1400" />
 
-Paris before Style Transfer | Paris after Style Transfer
+Dog before Style Transfer | Dog after Style Transfer
 :-------------------------:|:-------------------------:
-![Paris before Style Transfer](images/doggo_content.jpg) | ![Paris after Style Transfer](images/doggo_art.png)
-
+<img src="images/doggo_content.png" alt="drawing" width="1000" /> |<img src="images/doggo_art.png" alt="drawing" width="1400" />
 
 ### Prerequisites
 
