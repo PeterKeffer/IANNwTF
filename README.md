@@ -79,6 +79,22 @@ Dog before Style Transfer | Dog after Style Transfer
 :-------------------------:|:-------------------------:
 <img src="images/doggo_content.png" alt="drawing" width="1000" /> |<img src="images/doggo_art.png" alt="drawing" width="1400" />
 
+
+## CycleGAN Example 1:
+
+### Content Reference:
+
+<img src="images/cyclegan_input.png" alt="drawing" width="1000" />
+
+### Generated Image:
+
+<img src="images/cyclegan_generated.png" alt="drawing" width="1000" />
+
+
+## CycleGAN Example 2:
+
+<img src="images/cyclegan_ukiyoe.png" alt="drawing" width="1000" />
+
 ### Prerequisites
 
 The only thing you need to do, is to install all the requirements that are listed in requirements.txt. 
