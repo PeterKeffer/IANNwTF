@@ -84,16 +84,16 @@ Dog before Style Transfer | Dog after Style Transfer
 
 ### Content Reference:
 
-<img src="images/cyclegan_input.png" alt="drawing" width="1000" />
+<img align="middle" src="images/cyclegan_input.png" alt="drawing" width="500" />
 
 ### Generated Image:
 
-<img src="images/cyclegan_generated.png" alt="drawing" width="1000" />
+<img align="middle" src="images/cyclegan_generated.png" alt="drawing" width="500" />
 
 
 ## CycleGAN Example 2:
 
-<img src="images/cyclegan_ukiyoe.png" alt="drawing" width="1000" />
+<img  src="images/cyclegan_ukiyoe.png" alt="drawing" width="1000" />
 
 ### Prerequisites
 
