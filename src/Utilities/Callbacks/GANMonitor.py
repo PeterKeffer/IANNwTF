@@ -37,14 +37,16 @@ class GANMonitor(tf.keras.callbacks.Callback):
             output_generated_image_filepath = self.config["output_data"]["output_path"] + f"/Generated_Images/generated_img_{epoch+1}_{i}.png"
             output_generated_image_directory = os.path.dirname(output_generated_image_filepath)
             Path(output_generated_image_directory).mkdir(parents=True, exist_ok=True)
-            generated_image_wandb = wandb.Image(generated_image, caption="Generated_Image")
 
             output_input_image_filepath = self.config["output_data"]["output_path"] + f"Input_Images/input_img_{epoch+1}_{i}.png"
             output_input_image_directory = os.path.dirname(output_input_image_filepath)
             Path(output_input_image_directory).mkdir(parents=True, exist_ok=True)
-            input_image_wandb = wandb.Image(input_image, caption="Input_Image")
 
-            wandb.log({"Input_Image": input_image_wandb, "Generated_Image": generated_image_wandb})
+            if self.config["settings"]["use_wandb"]:
+                generated_image_wandb = wandb.Image(generated_image, caption="Generated_Image")
+                input_image_wandb = wandb.Image(input_image, caption="Input_Image")
+                wandb.log({"Input_Image": input_image_wandb, "Generated_Image": generated_image_wandb})
+
 
             generated_image = tf.keras.preprocessing.image.array_to_img(generated_image)
             generated_image.save(output_generated_image_filepath)
