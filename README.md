@@ -131,6 +131,7 @@ You can change the most important settings and hyperparameters in the Configs se
 Extensively used resources besides Original-Papers:
 
 https://keras.io/examples/generative/neural_style_transfer/
+
 https://machinelearningmastery.com/cyclegan-tutorial-with-keras/
 
 
