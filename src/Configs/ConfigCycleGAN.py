@@ -34,10 +34,10 @@ class ConfigCycleGAN(Config):
             "learning_rate_generator_BtoA":2e-4,
             "beta_1_generator_BtoA":0.5,
         
-            "learning_rate_discriminator_AtoB":2e-4,
-            "beta_1_discriminator_AtoB":0.5,
-            "learning_rate_discriminator_BtoA":2e-4,
-            "beta_1_discriminator_BtoA":0.5,
+            "learning_rate_discriminator_A":2e-4,
+            "beta_1_discriminator_A":0.5,
+            "learning_rate_discriminator_B":2e-4,
+            "beta_1_discriminator_B":0.5,
 
             "cycle_weight":10.0,
             "identity_weight":0.5,
@@ -50,7 +50,3 @@ class ConfigCycleGAN(Config):
 
     def __init__(self):
         super().__init__()
-
-    def setup(self):
-
-        return self.config

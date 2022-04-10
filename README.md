@@ -1,133 +1,115 @@
-# IANNwTF
-Project for IANNwTF Course WiSe 21/22 Cognitive Science at University Osnabrück 
-Members: Peter Keffer, Linda Ariel Ventura di Lorenzo Lopes, Erik Bossow, Julia Fülling, Jan-Eric Wiemann, Lena Kagoshima
+# IANNwTF Project - Group 28 & 24
+**Project for IANNwTF Course WiSe 21/22 Cognitive Science at University Osnabrück**
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Neural Style Transfer Example][Doggo_Art.png]]
+[![Neural Style Transfer Example][images/paris_art.png]
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
-
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have contributed to expanding this template!
-
-Use the `BLANK_README.md` to get started.
-
-
-This project is part of the _'Introduction to Artificial Neural Networks with Tensorflow'_ course at the _University Osnabrück_.
-In our project we generate pictures to which the art style of a chosen artist is transmitted while keeping the pictures content complete.
-For this we implemented 2 different approaches, on the one hand CycleGAN ( Link ) and on the other hand Neural Style Transfer ( Link ), with the use of TensorFlow.
-
+This project is part of the _'Introduction to Artificial Neural Networks with Tensorflow'_ course at the _University Osnabrück_.  
+In our project we generate pictures to which the art style of a chosen artist is transmitted while keeping the pictures content complete.  
+For this we implemented 2 different approaches, on the one hand CycleGAN ( [Link to the CycleGAN Paper](https://arxiv.org/pdf/1703.10593.pdf) ) and on the other hand Neural Style Transfer ( [Link to the Neural Style Transfer Paper](https://arxiv.org/pdf/1508.06576.pdf) ), with the use of TensorFlow.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- Project Structure -->
 ## Project Structure
 
     .
+    ├── images 
     ├── src                    
-    │   ├──── Configs          
+    │   ├──── Configs                               # Here you can find all the configs          
     │   │     ├── Config.py
-    │   │     ├── Config_CycleGAN.py
-    │   │     ├── Config_NeuralStyleTransfer.py
+    │   │     ├── ConfigCycleGAN.py
+    │   │     └── ConfigNeuralStyleTransfer.py
     │   │
-    │   ├──── Data   
+    │   ├──── Data                                  # Here you can find downloaded/unpacked Datasets and Data Utilities
     │   │     ├── Downloads
     │   │     ├── DataPipeline.py
-    │   │     └── Dataset_Downloader.py
+    │   │     ├── DatasetDownloader.py
+    │   │     └── Data_Utilities.py
     │   │
-    │   ├── Logs
+    │   ├──── Logs                                  # Here you can find generated images and Tensorboard Logs
     │   │
-    │   ├──── Models
+    │   ├──── Models                                # Here you can find all used Models
     │   │     ├── BaseModel.py
     │   │     ├── CycleGAN.py
     │   │     ├── NeuralStyleTransfer.py
     │   │     └── PatchGAN.py
     │   │
-    │   ├──── Utilities
-    │   │     ├── BaseModel.py
-    │   │     ├── CycleGAN.py
-    │   │     ├── NeuralStyleTransfer.py
-    │   │     ├── PatchGAN.py
+    │   ├──── Utilities                             # Here you can find general Utilities
+    │   │     ├── Callbacks                         # Here you can find custom Callbacks
+    │   │     └── Visualizer
     │   │
-    │   └── wandb                
+    │   ├──── wandb
+    │   ├─ main_CycleGAN.py                         # Run this main for CycleGAN
+    │   └─ main_NeuralStyleTransfer.py              # Run this main for NeuralStyleTransfer
+    │
     │── .gitignore
     │── LICENSE
-    │── main.ipynb
+    │── main_all_colab.ipynb
+    │── main_CycleGAN_colab.ipynb
+    │── main_NeuralStyleTransfer_colab.ipynb
     │── README.md
-    │── requirements.txt
+    └── requirements.txt
+
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+## Neural Style Transfer Example 1:
+
+### Reference:
+
+![Art Style Reference](images/paris_style.png)
+
+Dog before Style Transfer | Dog after Style Transfer
+:-------------------------:|:-------------------------:
+![Dog before Style Transfer](images/paris_content.jpg) | ![Dog after Style Transfer](images/paris_art.png)
+
+
+## Neural Style Transfer Example 2:
+
+### Reference:
+
+![Art Style Reference](images/doggo_style.png)
+
+Paris before Style Transfer | Paris after Style Transfer
+:-------------------------:|:-------------------------:
+![Paris before Style Transfer](doggo_content.jpg) | ![Paris after Style Transfer](doggo_art.png)
+
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+The only thing you need to do, is to install all the requirements that are listed in requirements.txt. 
+Feel free to use following command inside "IANNwTF" Project.
 
   ```
   pip install -r requirements.txt
   ```
 
-### Installation
+In this Project "Weights & Biases"(short wandb) is utilized. You can disable it in src/Configs/Config_(CycleGAN | NeuralStyleTransfer) under _config>settings>use_wandb_. 
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+Otherwise you need to create a [wandb account](https://wandb.ai/site) and get your API Key. I can fully recommend it! Besides that we have also included the option to use Tensorboard.
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+### Colab Version
 
+Alternatively you can use the provided Jupyter Notebooks main_*_colab.ipynb to instantly start using our project, without any hassle.
+
+Feel also free to use this Online Colab Version: [Colab Link](https://colab.research.google.com/drive/14iAIuzIXH6-_RZqMOxDhV-ac96UYbm9O?usp=sharing)
+
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
-## Usage
+### Usage
+Run `main_(CycleGAN | NeuralStyleTransfer).py` with _"IANNwTF/src/"_ as Working Directory.
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+You can change the most important settings and hyperparameters in the Configs section.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -144,23 +126,18 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-<!-- CONTACT -->
-## Contact
-
-
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
+Extensively used resources besides Original-Papers:
+
+https://keras.io/examples/generative/neural_style_transfer/
+https://machinelearningmastery.com/cyclegan-tutorial-with-keras/
 
 
+Tools:
+
+https://wandb.ai/site
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->

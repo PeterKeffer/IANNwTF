@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-class Model(tf.keras.Model):
+class BaseModel(tf.keras.Model):
 
     def __init__(self):
         pass

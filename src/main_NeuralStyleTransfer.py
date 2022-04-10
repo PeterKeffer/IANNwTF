@@ -8,38 +8,46 @@ from tensorflow.keras.applications import vgg19
 import numpy as np
 from Data.DataPipeline import DataPipeline
 from Models.NeuralStyleTransfer import NeuralStyleTransfer
-from Configs.Config_NeuralStyleTransfer import ConfigNeuralStyleTransfer
+from Configs.ConfigNeuralStyleTransfer import ConfigNeuralStyleTransfer
 from Utilities.Callbacks.ImageGenerator import ImageGenerator
 from Utilities.Visualizer import Visualizer
 
+# Get and Create Config
 config = ConfigNeuralStyleTransfer().get_config()
 
 logging.basicConfig(level=config["settings"]["logging_level"])
 
+# Init wandb(Weights & Biases)
 if config["settings"]["use_wandb"]:
     wandb.init("NeuralStyleTransfer", config=config)
 
+# Preprocessing
+###########################
 data_pipeline = DataPipeline()
-neural_style_transfer = NeuralStyleTransfer(config)
-
 
 target_image_shape = (config["output_data"]["generated_image_width"], config["output_data"]["generated_image_height"], config["input_data"]["input_image_channels"])
 input_image_shape = (config["input_data"]["input_image_width"], config["input_data"]["input_image_height"], config["input_data"]["input_image_channels"])
 
 content_image = data_pipeline.preprocess_image_vgg19(config["input_data"]["content_image_path"], target_image_shape)
 style_image = data_pipeline.preprocess_image_vgg19(config["input_data"]["style_image_path"], target_image_shape)
-generated_image = tf.Variable(data_pipeline.preprocess_image_vgg19(config["input_data"]["content_image_path"], target_image_shape))
+generated_image = tf.Variable(data_pipeline.preprocess_image_vgg19(config["input_data"]["content_image_path"], target_image_shape)) # Important "tf.Variable" so Gradients are used/saved!
+###########################
 
-visualizer = Visualizer()
 
-optimizer = tf.keras.optimizers.Adam(learning_rate=config["hyperparameters"]["learning_rate"])
-
+# Create Callback for Image Plotter Saver
 image_generator_callback = ImageGenerator(config)
 
 # Tensorboard Preparation
 current_time = datetime.datetime.now().strftime("%Y%m%d")
 train_log_dir = 'Logs/Training/' + current_time
 tensorboard_summary_writer = tf.summary.create_file_writer(train_log_dir)
+
+visualizer = Visualizer()
+
+# Create optimizer - keep high learning rate! Don't use SGD!
+optimizer = tf.keras.optimizers.Adam(learning_rate=config["hyperparameters"]["learning_rate"])
+# Create NeuralStyleTransfer model
+neural_style_transfer = NeuralStyleTransfer(config)
 
 for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
     logs = neural_style_transfer.train_step((generated_image, content_image, style_image), optimizer)
@@ -56,7 +64,7 @@ for iteration in range(1, config["hyperparameters"]["iterations"] + 1):
         print(f"Iteration {iteration}: total loss=%.2f, style loss=%.2f, content loss=%.2f" % (logs["total_loss"], logs["style_loss"], logs["content_loss"]))
 
         generated_image_deprocessed = data_pipeline.deprocess_image_tensor_vgg19(copy(generated_image).numpy(), target_image_shape)
-        visualizer.show_image(generated_image_deprocessed, normalized=False)
+        visualizer.show_image(generated_image_deprocessed, is_normalized=False)
 
     image_generator_callback.on_epoch_end(iteration, logs)
     # Delete Generated Image from Logs

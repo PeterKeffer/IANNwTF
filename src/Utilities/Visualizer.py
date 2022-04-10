@@ -7,17 +7,18 @@ import numpy as np
 
 class Visualizer:
 
-    # n zufällige bilder von dataset
-    # n Listen von Bildern printen
-    # output von model printen
-
     def denormalize(self, image):
+        """
+        "Removes" normalization from image
+        :param image: normalized image
+        :return: image
+        """
         image = (image + 1) * 128
         return image
 
     def show_dataset_images(self, dataset: tf.data.Dataset, amount: int, normalized: bool = True) -> None:
         """
-        selects a determined amount of randomly chosen images from our dataset
+        Selects a determined amount of randomly chosen images from our dataset
 
         :param normalized: is the dataset already normalized?
         :param dataset: tensorflow Dataset
@@ -36,12 +37,12 @@ class Visualizer:
                 break
 
 
-    def show_image(self, image, normalized: bool = True):
+    def show_image(self, image, is_normalized: bool = True):
         """
         Prints given numpy array or tensorflow tensor as image
 
         :param image: image to be printed
-        :param normalized: is this a normalized image?
+        :param is_normalized: is this a normalized image?
         :return: None
         """
         # Check if image is black&white
@@ -49,7 +50,7 @@ class Visualizer:
             image = tf.squeeze(image)
             plt.gray()
 
-        if normalized:
+        if is_normalized:
             image = self.denormalize(image)
 
         if type(image) is not np.ndarray:
