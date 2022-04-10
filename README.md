@@ -38,7 +38,7 @@ For this we implemented 2 different approaches, on the one hand CycleGAN ( [Link
     │   │
     │   ├──── Utilities                             # Here you can find general Utilities
     │   │     ├── Callbacks                         # Here you can find custom Callbacks
-    │   │     └── Visualizer
+    │   │     └── Visualizer.py
     │   │
     │   ├──── wandb
     │   ├─ main_CycleGAN.py                         # Run this main for CycleGAN
